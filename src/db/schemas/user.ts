@@ -1,5 +1,5 @@
-import {integer, pgEnum, pgTable, timestamp, uuid, varchar} from 'drizzle-orm/pg-core'
-import { Many, relations } from 'drizzle-orm'
+import { pgEnum, pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core'
+import { relations } from 'drizzle-orm'
 import {createInsertSchema} from 'drizzle-zod'
 import { z } from 'zod'
 import { BookTable } from './book'
