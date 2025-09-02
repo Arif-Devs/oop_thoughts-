@@ -1,5 +1,6 @@
 import { and, not, or, sql, SQLWrapper } from "drizzle-orm";
 import { z } from "zod";
+import { FindOptionsSchema } from "./IBaseRepository";
 
 export const Operators = {
   // Comparison Operators

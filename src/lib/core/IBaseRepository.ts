@@ -1,5 +1,7 @@
 import { SQLWrapper } from "drizzle-orm";
 import { PgColumn, PgTable } from "drizzle-orm/pg-core";
+import { FilterRuleGroupSchema, OrderDirection } from "./FilterBuilder";
+import z from "zod";
 
 export type ID = string | number;
 export type OrderDirection = "asc" | "desc";
@@ -13,6 +15,22 @@ export type FindOptionsSQL = {
     direction: OrderDirection;
   }[];
 };
+
+export const FindOptionsSchema = z
+  .object({
+    where: FilterRuleGroupSchema,
+    limit: z.number().default(10),
+    offset: z.number().default(0),
+    orderBy: z.array(
+      z.object({
+        column: z.string(),
+        direction: z.enum(OrderDirection),
+      })
+    ),
+  })
+  .partial();
+
+export type FindOptions = z.infer<typeof FindOptionsSchema>;
 
 export interface IBaseRepository<TTable extends PgTable & { id: SQLWrapper }> {
   //Queries
