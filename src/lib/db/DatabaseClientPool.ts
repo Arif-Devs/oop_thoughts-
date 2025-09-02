@@ -4,7 +4,6 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import * as schema from '@/db/schemas'
 
 
-
  export class DatabaseClientPool implements IDatabaseClient{
     private readonly pool: Pool;
     private readonly client: DrizzleClient
