@@ -1,7 +1,8 @@
 import { SQLWrapper } from "drizzle-orm";
-import { PgTable } from "drizzle-orm/pg-core";
+import { PgTable, PgColumn } from "drizzle-orm/pg-core";
 import { BaseRepository } from "./BaseRepository";
-import { ID } from "./IBaseRepository";
+import { FindOptions, ID, OrderDirection } from "./IBaseRepository";
+import { FilterBuilder } from "./FilterBuilder";
 
 export abstract class BaseService<
   TTable extends PgTable & { id: SQLWrapper },
@@ -9,8 +10,21 @@ export abstract class BaseService<
 > {
   constructor(protected readonly repository: TRepository) {}
 
-  async findAll() {
-    return "will implement later";
+  async findAll(options?: FindOptions) {
+    try {
+      const filter = options?.where
+        ? FilterBuilder.build(options?.where)
+        : undefined;
+
+      return await this.repository.findAll({
+        where: filter,
+        limit: options?.limit ?? 10,
+        offset: options?.offset ?? 0,
+        orderBy: this.transformOrderBy(options?.orderBy),
+      });
+    } catch (error) {
+      this.handleError(error);
+    }
   }
 
   async findById(id: ID) {
@@ -91,5 +105,20 @@ export abstract class BaseService<
         typeof error === "string" ? error : "An unexpected error occurred"
       );
     }
+  }
+
+  protected transformOrderBy(orderBy: FindOptions["orderBy"]) {
+    if (!orderBy) {
+      return undefined;
+    }
+
+    const table = this.repository.getTable();
+
+    return orderBy
+      .filter((order) => order.column in table)
+      .map((order) => ({
+        column: table[order.column as keyof typeof table] as PgColumn,
+        direction: order.direction as OrderDirection,
+      }));
   }
 }
