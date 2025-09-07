@@ -12,6 +12,9 @@
     "moduleDetection": "force",
     "outDir": "dist",
     "rootDir": "src",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "useDefineForClassFields": false,
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
